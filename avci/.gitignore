@@ -1,0 +1,19 @@
+# Cyber Mod / avci — never commit these
+.sudo
+siber.json
+*.db
+*.db-journal
+.avci/
+.capri/
+runs/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+out/
+bin/
+obj/
+.env
+*.local

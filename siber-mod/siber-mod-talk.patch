@@ -1,0 +1,43 @@
+diff --git a/cross/Talk.cs b/cross/Talk.cs
+index 3656718..5250b5e 100644
+--- a/cross/Talk.cs
++++ b/cross/Talk.cs
+@@ -816,7 +816,8 @@ namespace CapriDesktop
+             Typer.Submitted += delegate(string text)
+             {
+                 if (asked != null) { Action<string> to = asked; asked = null; Typer.Hide(); to(text); return; }
+-                if (!Typer.Secret) { pet.Hear(text); return; }
++                // Siber Mod hook: in Psycho a site name becomes a hunt job, otherwise "test/scan" goes to recon (patch — comes via apply.sh)
++                if (!Typer.Secret) { if (Siber.MaybePsycho(text) || Siber.MaybeHunt(text)) { Typer.Hide(); return; } pet.Hear(text); return; }
+                 Typer.Secret = false;
+                 Typer.Hide();
+                 Action<string> keyTo = secretTo ?? pet.SaveVoiceKey;
+@@ -879,11 +880,28 @@ namespace CapriDesktop
+             Start(heard);
+         }
+ 
++        // (siber-mod) Bubble text is a flat flow: Look.Wrap splits only at
++        // spaces, a '\n' inside the text causes hidden row shifts in
++        // FormattedText and lines get drawn ON TOP of each other (happened).
++        // ANSI color codes also become garbage. Central cleanup: whatever the
++        // source, every answer passes through here.
++        private static readonly System.Text.RegularExpressions.Regex FlatAnsi =
++            new System.Text.RegularExpressions.Regex(@"\x1B\[[0-9;?]*[A-Za-z]", System.Text.RegularExpressions.RegexOptions.Compiled);
++
++        internal static string Flat(string text)
++        {
++            if (text == null) return "";
++            string flat = FlatAnsi.Replace(text, " ");
++            return string.Join(" ", flat.Split((char[])null, System.StringSplitOptions.RemoveEmptyEntries));
++        }
++
+         // Like on Windows, where her bubble is drawn in her own window, nothing new shows while she's hidden or glitching out of
+         // sight: it would float there with nobody under it, and stop her pop-ins until she's shown.
+         internal void Answer(string heard, string answer, double seconds = 0)
+         {
+             if (pet.Away) return;
++            answer = Flat(answer);
++            if (answer.Length == 0) return;
+             reply = answer;
+             thinking = false;
+             pace = seconds < 0.2 ? LettersPerSecond : Math.Max(8, answer.Length / seconds);
