@@ -1,9 +1,0 @@
-# Cyber Mod — never commit these
-.sudo
-siber.json
-*.db
-runs/
-out/
-bin/
-obj/
-.env

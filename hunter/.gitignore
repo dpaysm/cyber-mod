@@ -1,0 +1,19 @@
+# Cyber Mod / hunter — never commit these
+.sudo
+blackwall.json
+*.db
+*.db-journal
+.hunter/
+.capri/
+runs/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+out/
+bin/
+obj/
+.env
+*.local

@@ -1,0 +1,62 @@
+diff --git a/cross/Pet.cs b/cross/Pet.cs
+index f2b8e78..cc73e31 100644
+--- a/cross/Pet.cs
++++ b/cross/Pet.cs
+@@ -348,6 +348,7 @@ namespace CapriDesktop
+         private readonly List<MenuItem> gapPicks = new List<MenuItem>();
+         private MenuItem watchItem;
+         private MenuItem caughtUpItem;
++        private MenuItem blackWall;
+         private double nextGlance = -1;
+         private double lastGlance = -1;
+         private int watchTicket;
+@@ -468,6 +469,7 @@ namespace CapriDesktop
+             Brain.BrainMenu = "in my right-click menu under Brain";
+             Brain.FreeKeyHow = "right-click me > Brain > Get a free NVIDIA key";
+             Brain.Bin = OperatingSystem.IsMacOS() ? "Trash" : "trash";
++            Blackwall.Init(this);
+             Brain.MemoryPath = Path.Combine(Program.Smoke ?? folder, "me.md");
+             // Remember our chats, like on Windows: every chat goes in a daily transcript, and the brain they picked folds older
+             // lines into memories.md, which she reads every chat.
+@@ -1397,6 +1399,25 @@ namespace CapriDesktop
+             hangItem.Click += delegate { if (hanging) LetGo(); else HangHere(); };
+             napItem = new MenuItem { Header = "Go to sleep" };
+             napItem.Click += delegate { Nap(!napAsked && clip != sleep); };
++            // Black Wall: avci bridge (patch — comes via apply.sh, re-applied on updates)
++            blackWall = new MenuItem { Header = "Black Wall" };
++            MenuItem withBurp = new MenuItem { Header = "With Burp", ToggleType = MenuItemToggleType.CheckBox, IsChecked = Blackwall.On };
++            withBurp.Click += delegate { Blackwall.Toggle(this); };
++            MenuItem psychoAuto = new MenuItem { Header = "Psycho (auto)" };
++            MenuItem psySimple = new MenuItem { Header = "Simple", ToggleType = MenuItemToggleType.Radio, GroupName = "bwpsy", IsChecked = Blackwall.PsychoOn && Blackwall.PsychoMode == "simple" };
++            psySimple.Click += delegate { Blackwall.SetPsycho(this, "simple"); };
++            MenuItem psyHard = new MenuItem { Header = "Hard", ToggleType = MenuItemToggleType.Radio, GroupName = "bwpsy", IsChecked = Blackwall.PsychoOn && Blackwall.PsychoMode == "hard" };
++            psyHard.Click += delegate { Blackwall.SetPsycho(this, "hard"); };
++            MenuItem psyOff = new MenuItem { Header = "Off", ToggleType = MenuItemToggleType.Radio, GroupName = "bwpsy", IsChecked = !Blackwall.PsychoOn };
++            psyOff.Click += delegate { Blackwall.SetPsycho(this, "off"); };
++            psychoAuto.Items.Add(psySimple);
++            psychoAuto.Items.Add(psyHard);
++            psychoAuto.Items.Add(psyOff);
++            MenuItem sudoPw = new MenuItem { Header = "Sudo password (edit file)" };
++            sudoPw.Click += delegate { Blackwall.OpenSudoFile(this); };
++            blackWall.Items.Add(withBurp);
++            blackWall.Items.Add(psychoAuto);
++            blackWall.Items.Add(sudoPw);
+             MenuItem move = new MenuItem { Header = "Move" };
+             for (int i = 0; i < WanderNames.Length; i++)
+             {
+@@ -1674,6 +1695,7 @@ namespace CapriDesktop
+             menu.Items.Add(sitItem);
+             menu.Items.Add(hangItem);
+             menu.Items.Add(napItem);
++            menu.Items.Add(blackWall);
+             menu.Items.Add(move);
+             menu.Items.Add(sizes);
+             menu.Items.Add(brainMenu);
+@@ -3926,6 +3948,7 @@ namespace CapriDesktop
+         {
+             if (quitting) return;
+             quitting = true;
++            Blackwall.ShutdownPanic();   // rule: quit = automatic CTRL+ALT+0 + off
+             Brain.Cancel();
+             voice.Stop();
+             if (presence != null) presence.Dispose();
