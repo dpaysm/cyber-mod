@@ -192,39 +192,8 @@ namespace CapriDesktop
         internal static bool PsychoOn { get { return psychoOn; } }
         internal static string PsychoMode { get { return psychoMode; } }
 
-        // Black Wall > Psycho (auto) menu: Simple / Hard / Off.
-        // Sudo password file: one click from the menu — opens the file in a
-        // text editor. The user writes their password as a SINGLE line, saves,
-        // closes. The file lives only on their machine, chmod 600. Installs
-        // read it via capri-sudo; Capri never reads/logs the content.
-        internal static void OpenSudoFile(Pet owner)
-        {
-            try
-            {
-                string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                string dir = Path.Combine(home, ".capri");
-                Directory.CreateDirectory(dir);
-                string file = Path.Combine(dir, ".sudo");
-                if (!File.Exists(file)) File.WriteAllText(file, "");
-                try
-                {
-                    if (!OperatingSystem.IsWindows())
-                        File.SetUnixFileMode(file, UnixFileMode.UserRead | UnixFileMode.UserWrite);
-                }
-                catch (Exception) { }
-                if (OperatingSystem.IsWindows())
-                    Process.Start(new ProcessStartInfo("notepad.exe", file) { UseShellExecute = false });
-                else if (OperatingSystem.IsMacOS())
-                    Process.Start(new ProcessStartInfo("open", "-e \"" + file + "\"") { UseShellExecute = false });
-                else
-                    Process.Start(new ProcessStartInfo("xdg-open", file) { UseShellExecute = false });
-                Say("Opened the sudo file in your editor choom — ONE line, just the password, save and close. It stays on this machine (chmod 600), installs will never ask again.");
-            }
-            catch (Exception ex)
-            {
-                Say("Couldn't open the sudo file choom: " + ex.Message + " — create ~/.capri/.sudo yourself, one line, your password.");
-            }
-        }
+        // BlackWall > Psycho (auto hacking) menu: Simple / Hard / Off.
+
 
         internal static void SetPsycho(Pet owner, string mode)
         {

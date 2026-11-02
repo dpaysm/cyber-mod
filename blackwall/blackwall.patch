@@ -1,5 +1,5 @@
 diff --git a/cross/Pet.cs b/cross/Pet.cs
-index f2b8e78..cc73e31 100644
+index f2b8e78..7a7fdcc 100644
 --- a/cross/Pet.cs
 +++ b/cross/Pet.cs
 @@ -348,6 +348,7 @@ namespace CapriDesktop
@@ -18,15 +18,15 @@ index f2b8e78..cc73e31 100644
              Brain.MemoryPath = Path.Combine(Program.Smoke ?? folder, "me.md");
              // Remember our chats, like on Windows: every chat goes in a daily transcript, and the brain they picked folds older
              // lines into memories.md, which she reads every chat.
-@@ -1397,6 +1399,25 @@ namespace CapriDesktop
+@@ -1397,6 +1399,22 @@ namespace CapriDesktop
              hangItem.Click += delegate { if (hanging) LetGo(); else HangHere(); };
              napItem = new MenuItem { Header = "Go to sleep" };
              napItem.Click += delegate { Nap(!napAsked && clip != sleep); };
-+            // Black Wall: avci bridge (patch — comes via apply.sh, re-applied on updates)
-+            blackWall = new MenuItem { Header = "Black Wall" };
++            // BlackWall: hunter bridge (patch — comes via apply.sh, re-applied on updates)
++            blackWall = new MenuItem { Header = "BlackWall" };
 +            MenuItem withBurp = new MenuItem { Header = "With Burp", ToggleType = MenuItemToggleType.CheckBox, IsChecked = Blackwall.On };
 +            withBurp.Click += delegate { Blackwall.Toggle(this); };
-+            MenuItem psychoAuto = new MenuItem { Header = "Psycho (auto)" };
++            MenuItem psychoAuto = new MenuItem { Header = "Psycho (auto hacking)" };
 +            MenuItem psySimple = new MenuItem { Header = "Simple", ToggleType = MenuItemToggleType.Radio, GroupName = "bwpsy", IsChecked = Blackwall.PsychoOn && Blackwall.PsychoMode == "simple" };
 +            psySimple.Click += delegate { Blackwall.SetPsycho(this, "simple"); };
 +            MenuItem psyHard = new MenuItem { Header = "Hard", ToggleType = MenuItemToggleType.Radio, GroupName = "bwpsy", IsChecked = Blackwall.PsychoOn && Blackwall.PsychoMode == "hard" };
@@ -36,15 +36,12 @@ index f2b8e78..cc73e31 100644
 +            psychoAuto.Items.Add(psySimple);
 +            psychoAuto.Items.Add(psyHard);
 +            psychoAuto.Items.Add(psyOff);
-+            MenuItem sudoPw = new MenuItem { Header = "Sudo password (edit file)" };
-+            sudoPw.Click += delegate { Blackwall.OpenSudoFile(this); };
 +            blackWall.Items.Add(withBurp);
 +            blackWall.Items.Add(psychoAuto);
-+            blackWall.Items.Add(sudoPw);
              MenuItem move = new MenuItem { Header = "Move" };
              for (int i = 0; i < WanderNames.Length; i++)
              {
-@@ -1674,6 +1695,7 @@ namespace CapriDesktop
+@@ -1674,6 +1692,7 @@ namespace CapriDesktop
              menu.Items.Add(sitItem);
              menu.Items.Add(hangItem);
              menu.Items.Add(napItem);
@@ -52,7 +49,7 @@ index f2b8e78..cc73e31 100644
              menu.Items.Add(move);
              menu.Items.Add(sizes);
              menu.Items.Add(brainMenu);
-@@ -3926,6 +3948,7 @@ namespace CapriDesktop
+@@ -3926,6 +3945,7 @@ namespace CapriDesktop
          {
              if (quitting) return;
              quitting = true;

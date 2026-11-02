@@ -14,11 +14,11 @@ private MenuItem blackWall;
 ## 2. Menu items (inside Menu(), below the `napItem.Click` line)
 
 ```csharp
-// Black Wall: hunter bridge (patch — comes via apply.sh, re-applied on updates)
-blackWall = new MenuItem { Header = "Black Wall" };
+// BlackWall: hunter bridge (patch — comes via apply.sh, re-applied on updates)
+blackWall = new MenuItem { Header = "BlackWall" };
 MenuItem withBurp = new MenuItem { Header = "With Burp", ToggleType = MenuItemToggleType.CheckBox, IsChecked = Blackwall.On };
 withBurp.Click += delegate { Blackwall.Toggle(this); };
-MenuItem psychoAuto = new MenuItem { Header = "Psycho (auto)" };
+MenuItem psychoAuto = new MenuItem { Header = "Psycho (auto hacking)" };
 MenuItem psychoSimple = new MenuItem { Header = "Simple", ToggleType = MenuItemToggleType.Radio, GroupName = "bwpsy", IsChecked = Blackwall.PsychoOn && Blackwall.PsychoMode == "simple" };
 psychoSimple.Click += delegate { Blackwall.SetPsycho(this, "simple"); };
 MenuItem psychoHard = new MenuItem { Header = "Hard", ToggleType = MenuItemToggleType.Radio, GroupName = "bwpsy", IsChecked = Blackwall.PsychoOn && Blackwall.PsychoMode == "hard" };
