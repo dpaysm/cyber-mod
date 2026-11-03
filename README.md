@@ -1,125 +1,133 @@
-# Cyber Mod — Capri × AVCI
+<div align="center">
 
-Adds a **Black Wall** entry to Capri's right-click menu → containing **With Burp** (normal mode) and **Psycho (auto)** → **Simple / Hard / Off**.
+# ⚡ CYBER MOD ⚡
 
-## Normal mode (with Burp)
+### Capri × HUNTER — your desktop companion that hacks with you
 
-1. Starts `hunter ingest` and the `hunter capri` bridge in the background by itself.
-2. Bulk-triages Burp traffic and starts testing whatever it finds suspicious on its own —
-   commands run inside hunter's cage, no approval needed.
-3. On IDOR suspicion it asks in chat for the second account id (until it gets an answer).
-4. Say "test this site" and it goes on a recon hunt (server profile, ffuf,
-   200s, open redirect).
-5. When Cyber Mod opens, a live watch terminal appears: every command + output.
+**A cyberpunk desktop pet with a full AI web-security copilot wired into its brain.**
 
-## Psycho Mode (standalone hunt)
+`burp traffic` → `AI triage` → `auto tests` → `confirmed findings` → `report draft`
 
-Pick **Black Wall > Psycho (auto) > Simple** or **Hard** from the menu. Just name a
-site in chat — Capri dives straight in with the selected mode and asks nothing else.
-It **adds the host you give to the cage (allowed_hosts) itself**; no manual config editing.
+[![Platform](https://img.shields.io/badge/platform-Linux%20(Kali)-blueviolet)](#)
+[![Capri](https://img.shields.io/badge/built%20for-Capri%20desktop-ff2d78)](#)
+[![License](https://img.shields.io/badge/license-MIT-green)](#)
+[![Tests](https://img.shields.io/badge/tests-92%20passing-brightgreen)](#)
 
-- **SIMPLE**: nmap + whatweb + nuclei — all three AT ONCE in separate terminals.
-- **HARD** (parallel waves, never idles):
-  1. While recon runs in the background (subfinder → dnsx → httpx), the main host is
-     instantly under fire: port scan + whatweb + nikto + nuclei.
-  2. Deep wave: every host returning 200 (max 20) gets its OWN terminal with nuclei +
-     URL harvesting (katana -jc / gau / waybackurls) + arjun hidden-parameter
-     mining — all simultaneously.
-  3. Analysis wave: sensitive files like .db/.sql/.env/.git from harvest + wayback URLs
-     are ACTUALLY downloaded and verified; jshunter hunts endpoints + secrets +
-     parameters across all JS files.
-  4. Parameterized URLs are reduced to TEMPLATES (a.com/x?id=11 and ?id=12 are the
-     same test — it runs once) → sqlmap (parallel waves of 8, --batch)
-     + dalfox (XSS).
-- No ffuf: its output demands expert analysis; instead there are tools that produce
-  findings directly, like jshunter + sqlmap + the sensitive-file hunter.
-- Every scan window's title: **Cyber Mod Capri Terminal — <stage>**.
-- Capri narrates every action aloud instantly ("[nuclei] → x.y choom."); every line the
-  worker writes is read from its now-file.
+<!-- SCREENSHOT: hero — Capri on the desktop with a psycho hunt running in neon terminals -->
+<!-- ![hero](docs/hero.png) -->
 
-Rules:
+<!-- VIDEO: 30s demo — right-click → BlackWall → Psycho (auto hacking) → type a target -->
+<!-- https://github.com/USER/cyber-mod/assets/.../demo.mp4 -->
 
-- **English UI**: menus, speech, and log lines are in English for public release.
+</div>
 
-- **The cage is fixed but feeds itself**: a host you give in chat is automatically
-  written to allowed_hosts; subdomains found by subfinder are in scope.
-  Hosts arriving from outside chat (browser etc.) that are out of scope are still rejected.
-- Commands live in code — the AI only comments and consults when stuck; the model
-  doesn't generate commands, so the injection surface is minimal.
-- **If a tool is missing** Capri asks: "X is not installed, want me to fetch it?" — say
-  "yes" and it installs in a VISIBLE terminal with a `(capri)` prompt (if a sudo password
-  is needed, you type it into that window yourself; Capri never sees it). Go tools
-  install under `~/.capri/bin`.
-- **Wordlists download without asking** (SecLists, ~/.hunter/wordlists).
-- Each stage's full output goes to `~/.hunter/psycho/<target>_<date>/NN_tool.txt`;
-  summaries collect in **REPORT.txt** in the same folder. Capri shouts out every stage
-  and glitches/teleports around the screen while the hunt runs.
-- **Consultation ladder when stuck**: deep model → NVIDIA second key
-  (`NVIDIA_API_KEY_2`) → Gemini free API (`GEMINI_API_KEY`).
-- **Panic: CTRL+ALT+0** (or unchecking the menu item) — the worker and all child
-  processes die instantly. Manually: `touch ~/.hunter/PANIC`.
+---
 
-## Installation (Kali)
+## What is this?
+
+**Cyber Mod** turns [Capri](https://github.com/lachydotmcg/capri-desktop) — the desktop pet — into a hunting partner for bug bounty and authorized web security testing:
+
+- 🐾 **Capri** lives on your desktop, narrates every action with a glitchy cyberpunk attitude, opens neon terminals and hunts in them while you watch.
+- 🎯 **hunter** is the Python copilot underneath: it watches Burp traffic, scores requests with a 3-tier AI funnel (prefilter → Groq → Kimi K3), generates test scripts, diffs results, and drafts reports.
+- 🧱 **BlackWall** is the bridge: right-click Capri → `BlackWall` → pick a mode. One menu. Total war.
+
+> ⚠️ **Authorized scope only.** Use this on bug bounty programs where you have explicit permission. The cage (scope enforcement) is always on — but authorization is on you.
+
+## The modes
+
+| Mode | What happens |
+|---|---|
+| **With Burp** | hunter ingests your Burp traffic, bulk-triages it with AI, and auto-tests the suspicious requests — inside the cage, no per-test approval |
+| **Psycho (auto hacking) → Simple** | nmap + whatweb + nuclei, all at once, each in its own neon terminal |
+| **Psycho (auto hacking) → Hard** | parallel waves: recon (subfinder → dnsx → httpx) while the main host burns (nikto, nuclei, port scan), then per-host nuclei + URL harvest + arjun, then verified sensitive-file hunting + jshunter, then sqlmap + dalfox on templated params |
+
+Every window titled `Cyber Mod Capri Terminal — <stage>`. Every command logged. Kill switch: **CTRL+ALT+0** — everything dies instantly.
+
+<!-- SCREENSHOT: the BlackWall menu -->
+<!-- ![menu](docs/menu.png) -->
+
+<!-- SCREENSHOT: a Hard hunt mid-run — grid of neon terminals -->
+<!-- ![hunt](docs/hunt.png) -->
+
+## Install (Kali Linux)
+
+**1 — Clone this repo:**
 
 ```bash
-# 1. The hunter side (Psycho build):
-#    cyber-mod repo → source ~/.venvs/avci/bin/activate → pip install -e ./hunter
-#    (your existing venv is fine; the `avci` command keeps working as an alias)
-#    allowed_hosts must be filled in ~/.hunter/config.yaml
+git clone https://github.com/USER/cyber-mod.git
+cd cyber-mod
+```
 
-# 2. Clone Capri + patch + build (.NET 10 SDK required)
+**2 — Install hunter (the Python copilot):**
+
+```bash
+python3 -m venv ~/.venvs/hunter
+source ~/.venvs/hunter/bin/activate
+pip install -e ./hunter
+hunter --help
+```
+
+**3 — Set your keys (free tier is enough to start):**
+
+```bash
+export GROQ_API_KEY=gsk_...        # https://console.groq.com  (free — triage brain)
+export MOONSHOT_API_KEY=sk-...     # https://platform.moonshot.ai  (paid — deep verification, optional)
+```
+
+**4 — Patch & build Capri (.NET 10 SDK required):**
+
+```bash
 git clone https://github.com/lachydotmcg/capri-desktop.git
+bash cyber-mod/blackwall/apply.sh "$PWD/capri-desktop"   # or: cd capri-desktop && bash ../cyber-mod/blackwall/apply.sh
 cd capri-desktop
-bash /path/to/blackwall/apply.sh
 dotnet build cross/Capri.Cross.csproj -c Release -o out/cross
 ./out/cross/Capri
 ```
 
-If your `hunter` command lives inside a venv, once:
+**5 — Tell Capri where hunter lives (once, only if it's in a venv):**
 
 ```bash
-echo '{"hunter": "/home/USER/.venvs/avci/bin/hunter"}' > ~/.hunter/blackwall.json
+echo '{"hunter": "'$HOME'/.venvs/hunter/bin/hunter"}' > ~/.hunter/blackwall.json
 ```
 
-## When Capri updates
+Done. Right-click the pet → **BlackWall**.
+
+## Usage
+
+```
+Right-click Capri → BlackWall → With Burp            # traffic-driven hunting
+Right-click Capri → BlackWall → Psycho (auto hacking) → Hard
+Chat:  "test example.com"                            # Capri adds it to the cage and dives
+Panic: CTRL+ALT+0                                    # instant kill, everything
+```
+
+Full hunter CLI: `hunter` (TUI) · `hunter ingest` · `hunter proxy` · `hunter shell` · `hunter triage` · `hunter report` — see [`hunter/README.md`](hunter/README.md).
+
+## Update
+
+One command — pulls the latest Cyber Mod **and** the latest upstream Capri, re-applies the patch, rebuilds:
 
 ```bash
-cd capri-desktop
-git checkout -- cross/Pet.cs cross/Talk.cs   # revert the hooks (apply.sh re-adds them)
-git pull
-bash /path/to/blackwall/apply.sh
-dotnet build cross/Capri.Cross.csproj -c Release -o out/cross
+bash ~/cyber-mod/blackwall/update.sh
 ```
 
-The patch is 1 file + 5 hooks (~11 lines); if it doesn't apply automatically, see `HOOKS.md`.
+> Never use Capri's built-in "Get Capri" button — that installs the vanilla app and wipes the mod. `update.sh` is the way.
 
-## Security
+## The cage (security model)
 
-No per-test approval, but the cage is fixed: out-of-scope hosts are physically
-rejected, and the deny list + auto-approval run on every command. All commands
-remain as an audit trail in `~/.hunter/blackwall.log` + the `pipeline_events` table.
-Psycho Mode controls only the terminals IT opened; it never touches your
-applications and can be cut at any moment with CTRL+ALT+0.
+- **Scope enforcement:** hosts outside `allowed_hosts` are rejected at every layer — recording, scripts, agent commands. Chat-given hosts are added automatically.
+- **Deny list + auto-approval filter** run on every command. No chained redirects out of scope.
+- **Proof limits:** sqlmap stops at `--current-user`/`--current-db`. No data dumping, ever.
+- **Audit trail:** every command and output lands in `~/.hunter/blackwall.log` + the `pipeline_events` table.
 
-## Small notes (latest version)
+## Repo layout
 
-- Capri starts with Black Wall OFF on every launch; you enable the Burp mirror and
-  Psycho from the right-click menu (your mode preference is remembered).
-- In the first install terminal, your sudo password is asked ONCE; if you want, it's
-  stored under `~/.capri/.sudo` (chmod 600, readable only by your user) and NEVER
-  asked again. Leave it empty and sudo asks by itself each time.
-- If a tool can't be installed or you say "no", the hunt doesn't stop: Capri skips
-  that tool, tells you the manual install command, and moves on.
-- Intel runs in the background of every hunt: Capri tries to identify the target via
-  whois/IP and says a single "I know this site"-style sentence.
-- All scan lanes run AT ONCE: slow main-host scans (nikto, port scan, testssl) live
-  in their own lane; the deep wave and sqlmap don't wait for them. If you close a
-  terminal window the hunt doesn't freeze — it continues with the remaining output.
-- "Quit Capri" is now an automatic PANIC: the running hunt, the worker, and all tool
-  processes are killed, and Black Wall/Psycho are saved as off.
-- Capri's messages no longer pile up: a message arriving while the bubble is busy
-  queues up and shows in order once the bubble clears. Also, '\n' and ANSI color
-  codes in the text are stripped before reaching the bubble — the double-layered
-  soup look from line wrapping is fixed.
-- A stale lock left by a dead worker now releases by itself — no more
-  "turn it off, switch to hard" dance; zombie processes count as dead too.
+```
+cyber-mod/
+├── hunter/      # the AI web-security copilot (Python, TUI + agent + psycho pipeline)
+└── blackwall/   # the Capri patch kit (Blackwall.cs + apply.sh + update.sh + HOOKS.md)
+```
+
+## License
+
+MIT — but remember: a license doesn't grant you authorization to test. Scope first.

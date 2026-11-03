@@ -14,16 +14,19 @@
 #   bash update.sh --capri-only   # update just the Capri side
 #
 # Override the defaults with env vars if your paths differ:
-#   CYBER_MOD_DIR   — where the cyber-mod repo lives   (default: ~/Desktop/avci/cyber-mod)
-#   CAPRI_DIR       — where capri-desktop lives        (default: ~/Desktop/avci/capri-desktop)
-#   HUNTER_VENV     — the hunter python venv (default: ~/.venvs/avci — existing one is fine)
+#   CYBER_MOD_DIR   — where the cyber-mod repo lives   (default: auto — the repo this script is in)
+#   CAPRI_DIR       — where capri-desktop lives        (default: <repo>/capri-desktop)
+#   HUNTER_VENV     — the hunter python venv         (default: ~/.venvs/hunter)
 # ============================================================================
 
 set -euo pipefail
 
-CYBER_MOD_DIR="${CYBER_MOD_DIR:-$HOME/Desktop/avci/cyber-mod}"
-CAPRI_DIR="${CAPRI_DIR:-$HOME/Desktop/avci/capri-desktop}"
-HUNTER_VENV="${HUNTER_VENV:-$HOME/.venvs/avci}"
+# Defaults follow the README layout: this script lives in <repo>/blackwall/,
+# capri-desktop is cloned next to it inside the repo root.
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CYBER_MOD_DIR="${CYBER_MOD_DIR:-$(dirname "$SELF_DIR")}"
+CAPRI_DIR="${CAPRI_DIR:-$CYBER_MOD_DIR/capri-desktop}"
+HUNTER_VENV="${HUNTER_VENV:-$HOME/.venvs/hunter}"
 
 DO_HUNTER=1; DO_CAPRI=1
 case "${1:-}" in
